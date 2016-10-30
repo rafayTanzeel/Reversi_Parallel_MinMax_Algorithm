@@ -7,6 +7,8 @@
 #include <alsa/asoundlib.h>
 #include <stdbool.h>
 #include "audioMixer_template.h"
+#include "joystick_ctrl.h"
+
 // File used for play-back:
 // If cross-compiling, must have this file available, via this relative path,
 // on the target when the application is run. This example's Makefile copies the wave-files/
@@ -29,10 +31,12 @@ void custom_beats();
 int main(void)
 {
 	// Configure Output Device
-	AudioMixer_init();
+//	AudioMixer_init();
 
-	custom_beats();
+//	custom_beats();
 //	standard_beats();
+
+	joystick_init();
 
 
 	sleep(20);
