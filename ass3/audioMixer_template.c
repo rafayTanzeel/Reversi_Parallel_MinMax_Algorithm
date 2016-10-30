@@ -270,6 +270,13 @@ static void fillPlaybackBuffer(short *playbackBuffer, int size)
 			if(newLocation>=pSoundB->numSamples){
 //				AudioMixer_freeWaveFileData(soundBites[i].pSound);
 				soundBites[i].pSound=NULL;
+
+				for(int j=i; j+1<MAX_SOUND_BITES; j++){
+					soundBites[j].pSound=soundBites[j+1].pSound;
+					soundBites[j].location=soundBites[j+1].location;
+				}
+				soundBites[MAX_SOUND_BITES-1].pSound=NULL;
+
 			}
 			break;
 		}

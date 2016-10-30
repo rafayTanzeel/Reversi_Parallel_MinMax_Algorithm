@@ -39,7 +39,8 @@ int main(void)
 	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE2, &snareFile);
 	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE3, &baseFile);
 
-	while(true){
+	while(1){
+//	for(int i=0;i<5; i++){
 		// Play Audio
 		AudioMixer_queueSound(&hithatFile);
 		AudioMixer_queueSound(&snareFile);
