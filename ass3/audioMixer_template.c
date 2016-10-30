@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <limits.h>
 #include <alloca.h> // needed for mixer
-
+#include <time.h>
 
 static snd_pcm_t *handle;
 
@@ -247,12 +247,17 @@ void AudioMixer_setVolume(int newVolume)
 //    size: the number of values to store into playbackBuffer
 static void fillPlaybackBuffer(short *playbackBuffer, int size)
 {
+//	int BPM = 60;
+//	long delay=((60.0/BPM)/2.0)*1000000000;
+//	printf("%ld\n",delay);
+//	nanosleep((const struct timespec[]){{0, delay}}, NULL);
+
+
 	memset(playbackBuffer,0,size * sizeof(*playbackBuffer));
 
 	pthread_mutex_lock(&audioMutex);
 
 	for(int i=0; i<MAX_SOUND_BITES; i++){
-
 		wavedata_t *pSoundB=soundBites[i].pSound;
 		wavedata_t *pSoundBSec=soundBites[(i+1)%MAX_SOUND_BITES].pSound;
 
@@ -300,6 +305,7 @@ static void fillPlaybackBuffer(short *playbackBuffer, int size)
 
 				}
 				soundBites[MAX_SOUND_BITES-1].pSound=pSoundB;
+				soundBites[MAX_SOUND_BITES-1].pSound=NULL;
 
 				if(i+1<MAX_SOUND_BITES && beat_count%2==0){
 					soundBites[i].pSound=NULL;
@@ -308,25 +314,28 @@ static void fillPlaybackBuffer(short *playbackBuffer, int size)
 						soundBites[j].location=soundBites[j+1].location;
 					}
 					soundBites[MAX_SOUND_BITES-1].pSound=pSoundBSec;
+					soundBites[MAX_SOUND_BITES-1].pSound=NULL;
 
 				}
 				beat_count++;
 
 			}
-
 			break;
 		}
 	}
+//	nanosleep((const struct timespec[]){{0, delay}}, NULL);
 
 	pthread_mutex_unlock(&audioMutex);
 
 }
 
 
+
 void* playbackThread(void* arg)
 {
 
 	while (!stopping) {
+
 		// Generate next block of audio
 		fillPlaybackBuffer(playbackBuffer, playbackBufferSize);
 
@@ -334,6 +343,8 @@ void* playbackThread(void* arg)
 		// Output the audio
 		snd_pcm_sframes_t frames = snd_pcm_writei(handle,
 				playbackBuffer, playbackBufferSize);
+
+//		snd_pcm_drain(handle);
 
 		// Check for (and handle) possible error conditions on output
 		if (frames < 0) {
@@ -349,6 +360,8 @@ void* playbackThread(void* arg)
 			printf("Short write (expected %li, wrote %li)\n",
 					playbackBufferSize, frames);
 		}
+
+		fflush(stdout);
 	}
 
 	return NULL;
