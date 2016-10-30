@@ -10,7 +10,7 @@
 // If cross-compiling, must have this file available, via this relative path,
 // on the target when the application is run. This example's Makefile copies the wave-files/
 // folder along with the executable to ensure both are present.
-#define SOURCE_FILE "wave-files/100060__menegass__gui-drum-splash-hard.wav"
+#define SOURCE_FILE_BD "wave-files/100060__menegass__gui-drum-splash-hard.wav"
 //#define SOURCE_FILE "wave-files/100053__menegass__gui-drum-cc.wav"
 
 #define SAMPLE_RATE   44100
@@ -33,14 +33,14 @@ void Audio_playFile(snd_pcm_t *handle, wavedata_t *pWaveData);
 
 int main(void)
 {
-	printf("Beginning play-back of %s\n", SOURCE_FILE);
+	printf("Beginning play-back of %s\n", SOURCE_FILE_BD);
 
 	// Configure Output Device
 	snd_pcm_t *handle = Audio_openDevice();
 
 	// Load wave file we want to play:
 	wavedata_t sampleFile;
-	Audio_readWaveFileIntoMemory(SOURCE_FILE, &sampleFile);
+	Audio_readWaveFileIntoMemory(SOURCE_FILE_BD, &sampleFile);
 
 	// Play Audio
 	Audio_playFile(handle, &sampleFile);

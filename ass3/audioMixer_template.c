@@ -44,7 +44,7 @@ static pthread_t playbackThreadId;
 static pthread_mutex_t audioMutex = PTHREAD_MUTEX_INITIALIZER;
 
 static int volume = 0;
-
+static int beat_count=0;
 void AudioMixer_init(void)
 {
 	AudioMixer_setVolume(DEFAULT_VOLUME);
@@ -254,30 +254,66 @@ static void fillPlaybackBuffer(short *playbackBuffer, int size)
 	for(int i=0; i<MAX_SOUND_BITES; i++){
 
 		wavedata_t *pSoundB=soundBites[i].pSound;
+		wavedata_t *pSoundBSec=soundBites[(i+1)%MAX_SOUND_BITES].pSound;
+
 		int location=soundBites[i].location;
 		int newLocation=location;
 
+		int num_sample=(pSoundB!=NULL)?pSoundB->numSamples:0;
+
+		if(beat_count%2==0 && pSoundB!=NULL && pSoundBSec!=NULL){
+			num_sample=(pSoundB->numSamples > pSoundBSec->numSamples)?pSoundB->numSamples:pSoundBSec->numSamples;
+		}
+
 		if(pSoundB!=NULL){
-			for(int j=0; j<size && j+location<pSoundB->numSamples; j++){
-				int buffer=playbackBuffer[j]+((pSoundB->pData)[j+location]);
-				playbackBuffer[j]=(buffer>SHRT_MAX)?SHRT_MAX:buffer;
+			for(int j=0; j<size && j+location<num_sample; j++){
+				int bufferSec=0;
+				if(pSoundBSec!=NULL && beat_count%2==0 && j+location<pSoundBSec->numSamples){
+					bufferSec=(pSoundBSec->pData)[j+location];
+				}
+				int buffer=((pSoundB->pData)[j+location])*((j+location<pSoundB->numSamples)?1:0)+bufferSec;
+				if(buffer>SHRT_MAX){
+					playbackBuffer[j]=SHRT_MAX;
+				}
+				else if(SHRT_MIN>buffer){
+					playbackBuffer[j]=SHRT_MIN;
+				}
+				else{
+					playbackBuffer[j]=buffer;
+				}
+
+
+//				playbackBuffer[j]=(buffer>SHRT_MAX)?SHRT_MAX:buffer;
 				newLocation++;
 			}
 			soundBites[i].location=newLocation;
 
 //			printf("Sample: %d Location: %d\n",pSoundB->numSamples, soundBites[i].location);
 
-			if(newLocation>=pSoundB->numSamples){
+			if(newLocation>=num_sample){
 //				AudioMixer_freeWaveFileData(soundBites[i].pSound);
 				soundBites[i].pSound=NULL;
 
 				for(int j=i; j+1<MAX_SOUND_BITES; j++){
 					soundBites[j].pSound=soundBites[j+1].pSound;
 					soundBites[j].location=soundBites[j+1].location;
+
 				}
-				soundBites[MAX_SOUND_BITES-1].pSound=NULL;
+				soundBites[MAX_SOUND_BITES-1].pSound=pSoundB;
+
+				if(i+1<MAX_SOUND_BITES && beat_count%2==0){
+					soundBites[i].pSound=NULL;
+					for(int j=i; j+1<MAX_SOUND_BITES; j++){
+						soundBites[j].pSound=soundBites[j+1].pSound;
+						soundBites[j].location=soundBites[j+1].location;
+					}
+					soundBites[MAX_SOUND_BITES-1].pSound=pSoundBSec;
+
+				}
+				beat_count++;
 
 			}
+
 			break;
 		}
 	}

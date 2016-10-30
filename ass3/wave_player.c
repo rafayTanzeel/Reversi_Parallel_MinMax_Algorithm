@@ -11,9 +11,9 @@
 // If cross-compiling, must have this file available, via this relative path,
 // on the target when the application is run. This example's Makefile copies the wave-files/
 // folder along with the executable to ensure both are present.
-#define SOURCE_FILE "beatbox-wav-files/100051__menegass__gui-drum-bd-hard.wav" //Base Drum
-#define SOURCE_FILE2 "beatbox-wav-files/100059__menegass__gui-drum-snare-soft.wav" //Snare
-#define SOURCE_FILE3 "beatbox-wav-files/100053__menegass__gui-drum-cc.wav" //HitHat
+#define SOURCE_FILE_BD "beatbox-wav-files/100051__menegass__gui-drum-bd-hard.wav" //Base Drum
+#define SOURCE_FILE_SN "beatbox-wav-files/100059__menegass__gui-drum-snare-soft.wav" //Snare
+#define SOURCE_FILE_HH "beatbox-wav-files/100053__menegass__gui-drum-cc.wav" //HitHat
 //#define SOURCE_FILE "wave-files/100053__menegass__gui-drum-cc.wav"
 
 #define SAMPLE_RATE   44100
@@ -33,20 +33,30 @@ int main(void)
 	// Load wave file we want to play:
 	wavedata_t hithatFile;
 	wavedata_t snareFile;
-	wavedata_t baseFile;
+	wavedata_t basedrumFile;
 
-	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE, &hithatFile);
-	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE2, &snareFile);
-	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE3, &baseFile);
+	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE_HH, &hithatFile);
+	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE_SN, &snareFile);
+	AudioMixer_readWaveFileIntoMemory(SOURCE_FILE_BD, &basedrumFile);
 
-	while(1){
-//	for(int i=0;i<5; i++){
-		// Play Audio
-		AudioMixer_queueSound(&hithatFile);
-		AudioMixer_queueSound(&snareFile);
-		AudioMixer_queueSound(&baseFile);
+	// Play Audio
 
-	}
+	//Hi-hat, Base
+	AudioMixer_queueSound(&hithatFile);
+	AudioMixer_queueSound(&basedrumFile);
+
+	//Hi-hat
+	AudioMixer_queueSound(&hithatFile);
+
+	//Hi-hat, Snare
+	AudioMixer_queueSound(&hithatFile);
+	AudioMixer_queueSound(&snareFile);
+
+	//Hi-hat
+	AudioMixer_queueSound(&hithatFile);
+
+
+
 
 //	sleep(10);
 	//Freeing sound file data
@@ -54,7 +64,7 @@ int main(void)
 
 	AudioMixer_freeWaveFileData(&hithatFile);
 	AudioMixer_freeWaveFileData(&snareFile);
-	AudioMixer_freeWaveFileData(&baseFile);
+	AudioMixer_freeWaveFileData(&basedrumFile);
 
 	printf("Done!\n");
 	return 0;
