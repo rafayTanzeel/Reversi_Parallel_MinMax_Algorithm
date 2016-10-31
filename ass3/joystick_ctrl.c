@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <pthread.h>
 
 
@@ -18,6 +17,20 @@
 #define JSPB "27" //constant no. 27 is joystick pushdown gpio number
 
 static pthread_t joystickThreadId;
+
+//Movement Mask
+//00000 No Movement
+//00001 Up Movement
+//00010 Dn Movement
+//00100 Lft Movement
+//01000 Rt Movement
+//10000 Pb Movement
+
+static int movement_mask=00000;
+
+int joystick_getMovement(){
+	return movement_mask;
+}
 
 
 void joystick_init(void){
@@ -68,29 +81,33 @@ void* joystickThread(void* arg){
 		sprintf(input_value, "/sys/class/gpio/gpio%s/value", JSUP);
 		readFile(input_value, buff, max_length); //reading joystick value from gpio
 		value=buff[0]; //char extracted rom joystick up gpio file
+		movement_mask=(value=='0')?00001:00000;
+
 //		printf("JS UP %c\n", value);
 
 		sprintf(input_value, "/sys/class/gpio/gpio%s/value", JSDN);
 		readFile(input_value, buff, max_length); //reading joystick value from gpio
 		value = buff[0]; //char extracted rom joystick up gpio file
+		movement_mask=(value=='0')?00010:00000;
 //		printf("JS Down %c\n", value);
 
 		sprintf(input_value, "/sys/class/gpio/gpio%s/value", JSRT);
 		readFile(input_value, buff, max_length); //reading joystick value from gpio
 		value = buff[0]; //char extracted rom joystick up gpio file
+		movement_mask=(value=='0')?01000:00000;
 //		printf("JS Right %c\n", value);
 
 		sprintf(input_value, "/sys/class/gpio/gpio%s/value", JSLFT);
 		readFile(input_value, buff, max_length); //reading joystick value from gpio
 		value = buff[0]; //char extracted rom joystick up gpio file
+		movement_mask=(value=='0')?00100:00000;
 //		printf("JS Left %c\n", value);
 
 		sprintf(input_value, "/sys/class/gpio/gpio%s/value", JSPB);
 		readFile(input_value, buff, max_length); //reading joystick value from gpio
 		value = buff[0]; //char extracted rom joystick up gpio file
+		movement_mask=(value=='0')?10000:00000;
 //		printf("JS Centre %c\n", value);
-
-
 
 	}
 

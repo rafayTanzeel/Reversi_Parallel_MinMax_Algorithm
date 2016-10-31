@@ -16,7 +16,7 @@ void writeFile(char* filePath, char* input); //Writes content to file
 
 void joystick_init();
 void* joystickThread(void* arg);
-
+int joystick_getMovement();
 
 
 

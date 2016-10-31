@@ -45,6 +45,8 @@ static pthread_mutex_t audioMutex = PTHREAD_MUTEX_INITIALIZER;
 
 static int volume = 0;
 static int beat_count=0;
+static int BPM = 120;
+
 void AudioMixer_init(void)
 {
 	AudioMixer_setVolume(DEFAULT_VOLUME);
@@ -89,6 +91,23 @@ void AudioMixer_init(void)
 	// Launch playback thread:
 	pthread_create(&playbackThreadId, NULL, playbackThread, NULL);
 }
+
+
+int AudioMixer_getHalfBeatDelay(){
+	return ((60.0/BPM)/2.0)*1000000000;
+}
+
+
+
+void AudioMixer_setBPM(int val){
+	BPM=val;
+}
+
+
+int AudioMixer_getBPM(){
+	return BPM;
+}
+
 
 
 // Client code must call AudioMixer_freeWaveFileData to free dynamically allocated data.

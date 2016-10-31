@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include "audioMixer_template.h"
 #include "joystick_ctrl.h"
+#include  "zencape_inputCtrl.h"
+
 
 // File used for play-back:
 // If cross-compiling, must have this file available, via this relative path,
@@ -26,17 +28,23 @@ char* beatbox_fileName[]={"beatbox-wav-files/100051__menegass__gui-drum-bd-hard.
 
 void standard_beats();
 void custom_beats();
+//BPM 40 to 300
+int BPM = 120;
 
 
 int main(void)
 {
-	// Configure Output Device
-//	AudioMixer_init();
 
-//	custom_beats();
+//	zencape_init();
+//	joystick_init();
+//	// Configure Output Device
+//	AudioMixer_init();
+//
+////	custom_beats();
 //	standard_beats();
 
-	joystick_init();
+
+
 
 
 	sleep(20);
@@ -61,8 +69,7 @@ void standard_beats(){
 
 		// Play Audio
 
-		//BPM 40 to 300
-		int BPM = 120;
+
 		long delay=((60.0/BPM)/2.0)*1000000000;
 //		printf("%ld\n",delay);
 
@@ -140,5 +147,6 @@ void custom_beats(){
 		AudioMixer_freeWaveFileData(&basedrumFile);
 
 }
+
 
 
