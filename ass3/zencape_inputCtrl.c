@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include "audioMixer_template.h"
 #include "joystick_ctrl.h"
-
+#include "accelerometerCtrl.h"
 
 
 
@@ -34,7 +34,7 @@ void zencape_init(void){
 
 	joystick_init();
 	AudioMixer_init();
-
+	accelerometer_init();
 	// Launch playback thread:
 	pthread_create(&zencapeThreadId, NULL, zencapeThread, NULL);
 
@@ -47,6 +47,7 @@ void* zencapeThread(void* arg){
 			movement=joystick_getMovement();
 
 			(menu!=2)?beat_sequencer():NULL;
+			update_postionVal();
 
 			switch (movement) {
 			case 00001: //Up Movement

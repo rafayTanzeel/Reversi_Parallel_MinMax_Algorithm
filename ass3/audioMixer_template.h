@@ -39,5 +39,7 @@ void beat_sequencer();
 void custom_beats();
 void standard_beats();
 
+void Audio_playFile(int index);
+
 #endif
 

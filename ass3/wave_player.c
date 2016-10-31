@@ -9,7 +9,7 @@
 #include "audioMixer_template.h"
 #include "joystick_ctrl.h"
 #include  "zencape_inputCtrl.h"
-
+#include  "accelerometerCtrl.h"
 
 
 
@@ -18,9 +18,11 @@
 int main(void)
 {
 	// Configure Output Device
-	zencape_init();
-
-
+//	zencape_init();
+	accelerometer_init();
+	while(true){
+		update_postionVal();
+	}
 
 	sleep(100);
 	//Freeing sound file data

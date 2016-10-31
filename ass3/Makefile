@@ -4,7 +4,7 @@
 # Edit this file to compile extra C files into their own programs.
 TARGET= wave_player
 
-SOURCES= wave_player.c audioMixer_template.c joystick_ctrl.c zencape_inputCtrl.c
+SOURCES= wave_player.c audioMixer_template.c joystick_ctrl.c zencape_inputCtrl.c accelerometerCtrl.c
 
 
 PUBDIR = $(HOME)/cmpt433/public/myApps

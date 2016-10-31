@@ -417,25 +417,23 @@ void custom_beats(){
 
 void beat_sequencer(){
 
-	long delay=((60.0/AudioMixer_getBPM())/2.0)*1000000000;
-
 	//Hi-hat, Base
 	AudioMixer_queueSound(&hithatFile);
 	AudioMixer_queueSound(&basedrumFile);
-	nanosleep((const struct timespec[]){{0, delay}}, NULL);
+	nanosleep((const struct timespec[]){{0, AudioMixer_getHalfBeatDelay()}}, NULL);
 
 	//Hi-hat
 	AudioMixer_queueSound(&hithatFile);
-	nanosleep((const struct timespec[]){{0, delay}}, NULL);
+	nanosleep((const struct timespec[]){{0, AudioMixer_getHalfBeatDelay()}}, NULL);
 
 	//Hi-hat, Snare
 	AudioMixer_queueSound(&hithatFile);
 	AudioMixer_queueSound(&snareFile);
-	nanosleep((const struct timespec[]){{0, delay}}, NULL);
+	nanosleep((const struct timespec[]){{0, AudioMixer_getHalfBeatDelay()}}, NULL);
 
 	//Hi-hat
 	AudioMixer_queueSound(&hithatFile);
-	nanosleep((const struct timespec[]){{0, delay}}, NULL);
+	nanosleep((const struct timespec[]){{0, AudioMixer_getHalfBeatDelay()}}, NULL);
 }
 
 
@@ -443,6 +441,30 @@ void AudioMixer_freeFileDatas(void){
 	AudioMixer_freeWaveFileData(&hithatFile);
 	AudioMixer_freeWaveFileData(&snareFile);
 	AudioMixer_freeWaveFileData(&basedrumFile);
+}
+
+
+void Audio_playFile(int index)
+{
+
+	wavedata_t pWaveData;
+	AudioMixer_readWaveFileIntoMemory(beatbox_fileName[index], &pWaveData);
+
+	// If anything is waiting to be written to screen, can be delayed unless flushed.
+	fflush(stdout);
+
+	// Write data and play sound (blocking)
+	snd_pcm_sframes_t frames = snd_pcm_writei(handle, pWaveData.pData, pWaveData.numSamples);
+
+	// Check for errors
+	if (frames < 0)
+		frames = snd_pcm_recover(handle, frames, 0);
+	if (frames < 0) {
+		fprintf(stderr, "ERROR: Failed writing audio with snd_pcm_writei(): %li\n", frames);
+		exit(EXIT_FAILURE);
+	}
+	if (frames > 0 && frames < pWaveData.numSamples)
+		printf("Short write (expected %d, wrote %li)\n", pWaveData.numSamples, frames);
 }
 
 
