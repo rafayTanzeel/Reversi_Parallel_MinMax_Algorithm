@@ -4,6 +4,10 @@
 #include "audioMixer_template.h"
 #include "joystick_ctrl.h"
 
+
+
+
+
 #define MAX_TEMPO 300
 #define MIN_TEMPO 40
 
@@ -19,11 +23,17 @@ static int volume=80;
 static int tempo=120;
 static int movement=0;
 
+
+
+
 void zencape_init(void){
 	menu=0;
 	volume=AudioMixer_getVolume();
 	tempo=AudioMixer_getBPM();
 	movement=joystick_getMovement();
+
+	joystick_init();
+	AudioMixer_init();
 
 	// Launch playback thread:
 	pthread_create(&zencapeThreadId, NULL, zencapeThread, NULL);
@@ -32,9 +42,11 @@ void zencape_init(void){
 
 void* zencapeThread(void* arg){
 	while(true){
-			volume= AudioMixer_getVolume();
+			volume=AudioMixer_getVolume();
 			tempo=AudioMixer_getBPM();
 			movement=joystick_getMovement();
+
+			(menu!=2)?beat_sequencer():NULL;
 
 			switch (movement) {
 			case 00001: //Up Movement
@@ -52,6 +64,15 @@ void* zencapeThread(void* arg){
 			case 10000: //Pb Movement
 				++menu;
 				menu%=TOTAL_MENUS;
+
+				if (menu == 0) {
+					standard_beats();
+				} else if (menu == 1) {
+					custom_beats();
+				} else {
+					AudioMixer_freeFileDatas();
+				}
+
 				break;
 			default:    //No Movement
 				break;

@@ -33,6 +33,11 @@ void AudioMixer_setVolume(int newVolume);
 int AudioMixer_getHalfBeatDelay();
 int AudioMixer_getBPM();
 void AudioMixer_setBPM(int val);
+void AudioMixer_freeFileDatas(void);
+
+void beat_sequencer();
+void custom_beats();
+void standard_beats();
 
 #endif
 
