@@ -2,9 +2,9 @@
 # by Brian Fraser
 
 # Edit this file to compile extra C files into their own programs.
-TARGET= wave_player
+TARGET= beat-box
 
-SOURCES= wave_player.c audioMixer_template.c joystick_ctrl.c zencape_inputCtrl.c accelerometerCtrl.c
+SOURCES= beat_box.c audioMixer.c joystick_ctrl.c accelerometerCtrl.c zencape_inputCtrl.c udp_listener.c
 
 
 PUBDIR = $(HOME)/cmpt433/public/myApps

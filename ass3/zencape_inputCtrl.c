@@ -1,9 +1,10 @@
 #include "zencape_inputCtrl.h"
 #include <stdbool.h>
 #include <pthread.h>
-#include "audioMixer_template.h"
 #include "joystick_ctrl.h"
 #include "accelerometerCtrl.h"
+#include "audioMixer.h"
+#include <stdio.h>
 
 
 
@@ -46,8 +47,9 @@ void* zencapeThread(void* arg){
 			tempo=AudioMixer_getBPM();
 			movement=joystick_getMovement();
 
-			(menu!=2)?beat_sequencer():NULL;
-			update_postionVal();
+//			printf("%d\n",volume);
+
+//			update_postionVal();
 
 			switch (movement) {
 			case 00001: //Up Movement
@@ -78,6 +80,19 @@ void* zencapeThread(void* arg){
 			default:    //No Movement
 				break;
 			}
+			nanosleep((const struct timespec[]){{0, 10000000}}, NULL);
 		}
 
+}
+
+
+void zencape_setMenu(int arg){
+	menu=arg%TOTAL_MENUS;
+	if (menu == 0) {
+		standard_beats();
+	} else if (menu == 1) {
+		custom_beats();
+	} else {
+		AudioMixer_freeFileDatas();
+	}
 }

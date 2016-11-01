@@ -76,8 +76,6 @@ void* joystickThread(void* arg){
 
 	while(true){
 
-		 //buff variable used with readFile function to extract the value from file
-
 		sprintf(input_value, "/sys/class/gpio/gpio%s/value", JSUP);
 		readFile(input_value, buff, max_length); //reading joystick value from gpio
 		value=buff[0]; //char extracted rom joystick up gpio file

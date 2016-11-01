@@ -9,7 +9,8 @@
 #include <linux/i2c-dev.h>
 #include <stdint.h>
 #include <time.h>
-#include "audioMixer_template.h"
+
+#include "audioMixer.h"
 
 
 #define I2CDRV_LINUX_BUS1 "/dev/i2c-1"
@@ -121,7 +122,7 @@ void update_postionVal(){
 	prevY=y;
 	prevZ=z;
 
-	printf("%i\n",z);
+//	printf("%i\n",z);
 
 //	printf("x: %i, y: %i, z: %i\n",x,y,z);
 //	printf("%02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x\n", value[0], value[1], value[2], value[3], value[4], value[5], value[6], value[7], value[8], value[9]);

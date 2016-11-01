@@ -10,5 +10,6 @@
 
 void zencape_init(void);
 void* zencapeThread(void* arg);
+void zencape_setMenu(int arg);
 
 #endif /* ZENCAPE_INPUTCTRL_H_ */
